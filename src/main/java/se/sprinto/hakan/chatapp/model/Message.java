@@ -15,6 +15,10 @@ public class Message {
         this.timestamp = timestamp;
     }
 
+    public Message() {
+
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -25,6 +29,30 @@ public class Message {
 
     public LocalDateTime getTimestamp() {
         return timestamp;
+    }
+
+    public void setId(int anInt) {
+    }
+
+    public String getContent() {
+        return "";
+    }
+
+    public Thread getUser() {
+        return null;
+    }
+
+    public String getCreatedAt() {
+        return "";
+    }
+
+    public void setContent(String content) {
+    }
+
+    public void setCreatedAt(LocalDateTime localDateTime) {
+    }
+
+    public void setUser(User u) {
     }
 }
 

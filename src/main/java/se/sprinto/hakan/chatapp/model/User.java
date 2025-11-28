@@ -22,6 +22,9 @@ public class User {
         this.username = username;
         this.password = password;
     }
+    // konstruktor så userdatabasedao inte lyser rött xD
+    public User(int id, String username, String password, String displayName) {
+    }
 
     public int getId() {
         return id;
@@ -50,5 +53,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }
 

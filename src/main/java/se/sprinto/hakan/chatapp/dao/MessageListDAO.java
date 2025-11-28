@@ -24,6 +24,16 @@ public class MessageListDAO implements MessageDAO {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Message save(Message message) {
+        return null;
+    }
+
+    @Override
+    public List<Message> getAll() {
+        return List.of();
+    }
+
     // valfritt: för att testa lättare
     public void seedTestData() {
         messages.add(new Message(1, "Hej!", LocalDateTime.now()));

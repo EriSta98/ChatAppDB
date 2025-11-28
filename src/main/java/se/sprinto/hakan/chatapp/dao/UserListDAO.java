@@ -19,6 +19,7 @@ public class UserListDAO implements UserDAO {
         return user;
     }
 
+
     @Override
     public User login(String username, String password) {
         Optional<User> found = users.stream()
