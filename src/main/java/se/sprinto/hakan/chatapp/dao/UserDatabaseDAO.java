@@ -40,7 +40,7 @@ public class UserDatabaseDAO  implements UserDAO{
 
     @Override
     public User register(User user) {
-        String sql = "INSERT INTO users(username,password) values(?,?,?)";
+        String sql = "INSERT INTO users(username,password) values(?,?)";
 
         try (Connection conn = DatabaseUtil.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)){
