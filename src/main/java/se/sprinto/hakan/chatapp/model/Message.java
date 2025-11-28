@@ -19,6 +19,10 @@ public class Message {
 
     }
 
+    public int getId() {
+        return id;
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -31,28 +35,22 @@ public class Message {
         return timestamp;
     }
 
-    public void setId(int anInt) {
+    // --- setters ---
+
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getContent() {
-        return "";
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public Thread getUser() {
-        return null;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public String getCreatedAt() {
-        return "";
-    }
-
-    public void setContent(String content) {
-    }
-
-    public void setCreatedAt(LocalDateTime localDateTime) {
-    }
-
-    public void setUser(User u) {
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 }
 

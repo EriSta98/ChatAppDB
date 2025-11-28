@@ -15,63 +15,78 @@ public class MessageDatabaseDAO implements MessageDAO{
 
     @Override
     public void saveMessage(Message message) {
+        String sql = "INSERT INTO messages (user_id, text, created_at) VALUES (?, ?, ?)";
+
+        try(Connection conn = db.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);){
+
+            ps.setInt(1, message.getUserId());
+            ps.setString(2, message.getText());
+            ps.setTimestamp(3, Timestamp.valueOf(message.getTimestamp()));
+
+            ps.executeUpdate();
+
+            ResultSet keys = ps.getGeneratedKeys();
+            if (keys.next()){
+                message.setId(keys.getInt(1));
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save message", e);
+        }
 
     }
 
     @Override
     public List<Message> getMessagesByUserId(int userId) {
-        return List.of();
+        String sql = "SELECT text, created_at FROM messages WHERE user_id = ? ORDER BY created_at ASC";
+        List<Message> list = new ArrayList<>();
+
+        try(Connection conn = db.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+
+            try(ResultSet rs = ps.executeQuery()) {
+                while(rs.next()){
+                    String Text = rs.getString("text");
+                    LocalDateTime time = rs.getTimestamp("created_at").toLocalDateTime();
+                    list.add(new Message(userId, Text, time));
+                }
+            }
+
+        } catch (Exception e){
+            throw new RuntimeException("Failed to load messages", e);
+        }
+        return list;
     }
 
     @Override
     public Message save(Message message){
-        String sql = "INSERT INTO messages (user_id, content, created_at) VALUES (?, ?, ?)";
-        try (Connection conn = db.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
-
-            ps.setInt(1, (int) message.getUser().getId());
-            ps.setString(2, message.getContent());
-            ps.setTimestamp(3, Timestamp.valueOf(message.getCreatedAt()));
-
-            int affected = ps.executeUpdate();
-            if (affected == 0) throw new SQLException("Inserting message failed, no rows affected.");
-            try(ResultSet keys = ps.getGeneratedKeys()){
-                if (keys.next()){
-                    message.setId(keys.getInt(1));
-                }
-            }
-            return message;
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
+        saveMessage(message);
+        return message;
     }
 
     @Override
     public List<Message> getAll(){
-        String sql = "SELECT m.id, m.content, m.created_at, u.id as user_id, u.username" +
-                "FROM messages m JOIN users u ON m.user_id = u.id ORDER BY m.created_at ASC";
+        String sql = "SELECT user_id, text, created_at FROM messages ORDER BY created_at ASC";
         List<Message> list = new ArrayList<>();
+        
+        
         try(Connection conn = db.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                Message m = new Message();
-                m.setId(rs.getInt("id"));
-                m.setContent(rs.getString("content"));
-                Timestamp ts = rs.getTimestamp("created_at");
-                m.setCreatedAt(ts != null ? ts.toLocalDateTime() : LocalDateTime.now());
-
-                User u = new User();
-                u.setId(rs.getInt("user_id"));
-                u.setUsername(rs.getString("username"));
-                m.setUser(u);
-
-                list.add(m);
+                int userId = rs.getInt("user_id");
+                String text = rs.getString("text");
+                LocalDateTime timestamp = rs.getTimestamp("created_at").toLocalDateTime();
+                list.add(new Message(userId, text, timestamp));
             }
-            return list;
+            
         } catch (Exception e){
             throw new RuntimeException(e);
         }
+        return list;
     }
 }
